@@ -19,7 +19,7 @@ make
 ./app
 ```
 
-7) Clean the folder. 
+7) you can clean the folder with the following command. 
 ```
 make clean
 ```
