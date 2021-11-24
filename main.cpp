@@ -1,55 +1,5 @@
 
-#include <ev.h>
-#include <amqpcpp.h>
-#include <amqpcpp/libev.h>
-
-
-class MyHandler: public AMQP::LibEvHandler{
-
-    virtual void onAttached(AMQP::TcpConnection *connection) override
-    {
-
-     }
-    virtual void onConnected(AMQP::TcpConnection *connection) override
-    {
-
-    }
-
-    virtual bool onSecured(AMQP::TcpConnection *connection, const SSL *ssl) override
-    {
-        return true;
-    }
-
-    virtual void onReady(AMQP::TcpConnection *connection) override
-    {
-        std::cout<<"ready"<<std::endl;
-    }
-
-    virtual void onError(AMQP::TcpConnection *connection, const char *message) override
-    {
-
-    }
-
-    virtual void onClosed(AMQP::TcpConnection *connection) override
-    {
-
-    }
-
-    virtual void onLost(AMQP::TcpConnection *connection) override
-    {
-
-    }
-
-    virtual void onDetached(AMQP::TcpConnection *connection) override
-    {
-
-    }
-
-public:
-        MyHandler(struct ev_loop *loop): AMQP::LibEvHandler(loop){}
-};
-
-
+#include "MyHandler.h"
 
 int main()
 {

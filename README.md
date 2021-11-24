@@ -18,3 +18,8 @@ make
 ```
 ./app
 ```
+
+7) Clean the folder. 
+```
+make clean
+```
