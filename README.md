@@ -2,6 +2,8 @@
 
 This repository contain test code in order to implement a communication with two procceses via AMQP protocol.<br/>
 
+The project contains a C++ script for produce messages and C++ script (in consumer folder) to consume messages from a queue.
+
 ## Preparing the development environment
 
 1) Install [AMQ-CPP](https://github.com/CopernicaMarketingSoftware/AMQP-CPP/blob/master/examples/libevent.cpp)
@@ -23,3 +25,6 @@ make
 ```
 make clean
 ```
+
+## JSON
+For serializing and parsing JSON the project uses [JSON for modern C++](https://github.com/nlohmann/json)

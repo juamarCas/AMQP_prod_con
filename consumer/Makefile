@@ -4,7 +4,7 @@ LIB     = /usr/lib
 LINK    = -lamqpcpp -ldl -lev
 
 all: main.o  MyHandler.o
-	g++ -Wall -o app main.o MyHandler.o -pthread $(LINK)
+	g++ -Wall -o app main.o MyHandler.o -pthread -I./Includes $(LINK)
 
 main.o: MyHandler.o
 	g++ -c main.cpp -I./Includes -pthread
