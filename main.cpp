@@ -1,4 +1,5 @@
-
+#include <iostream>
+#include <string>
 #include "MyHandler.h"
 
 int main()
@@ -10,9 +11,13 @@ int main()
 
    AMQP::TcpChannel channel(&connection);
    channel.declareQueue("myqueue").onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-            std::cout<<"declared queue"<<std::endl;
-            channel.publish("","myqueue","hello world");
-            while(1){}
+            std::cout<<"declared queue: myqueue"<<std::endl;
+            while(1){
+               std::string msg; 
+               std::cout<<"type a message: "<<std::endl;
+               std::getline(std::cin, msg);  
+               channel.publish("", "myqueue", msg); 
+            }
    });
 
 
