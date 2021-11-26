@@ -1,3 +1,5 @@
 Install
 consumer/*.o
 *.o
+app
+consumer/app

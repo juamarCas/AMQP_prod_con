@@ -38,6 +38,7 @@ auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, 
     strncpy(j_receive, message.body(), message.bodySize()); 
 
     std::string j_final = std::string(j_receive);
+    std::cout<<strlen(j_receive); 
     auto j_parsed = nlohmann::json::parse(j_final); 
     std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
    
