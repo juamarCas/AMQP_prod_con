@@ -34,11 +34,11 @@ auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, 
     std::cout.write(message.body(), message.bodySize())<<std::endl;  
     channel.ack(deliveryTag);  
 
-    char j_receive[message.bodySize()];
-    strncpy(j_receive, message.body(), message.bodySize()); 
+    char j_receive[message.bodySize() + 1];
+    strncpy(j_receive, message.body(), message.bodySize() + 1); 
+    j_receive[message.bodySize()] = '\0'; 
 
     std::string j_final = std::string(j_receive);
-    std::cout<<strlen(j_receive); 
     auto j_parsed = nlohmann::json::parse(j_final); 
     std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
    

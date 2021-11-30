@@ -1,10 +1,11 @@
 
 INCLUDE = /usr/include
 LIB     = /usr/lib
-LINK    = -lamqpcpp -ldl -lev
+LINK    = -lamqpcpp -ldl -lev 
+FLAGS   = -Wall -g
 
 all: main.o  MyHandler.o
-	g++ -Wall -o app main.o MyHandler.o -pthread -I./Includes $(LINK)
+	g++ $(FLAGS) -o app main.o MyHandler.o -pthread -I./Includes $(LINK)
 
 main.o: MyHandler.o
 	g++ -c main.cpp -I./Includes -pthread
