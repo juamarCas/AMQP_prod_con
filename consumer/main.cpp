@@ -31,8 +31,7 @@ auto errorCb = [](const char *message) {
 auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered) {
 
     std::cout << "message received:" << std::endl;
-    std::cout.write(message.body(), message.bodySize())<<std::endl;  
-    channel.ack(deliveryTag);  
+      
 
     char j_receive[message.bodySize() + 1];
     strncpy(j_receive, message.body(), message.bodySize() + 1); 
@@ -41,16 +40,17 @@ auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, 
     std::string j_final = std::string(j_receive);
     auto j_parsed = nlohmann::json::parse(j_final); 
     std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
-   
+    channel.ack(deliveryTag);
 };
 
-channel.consume("myqueue")
-       .onReceived(messageCb)
-       .onSuccess(startCb)
-       .onError(errorCb);
+channel
+    .consume("myqueue")
+    .onReceived(messageCb)
+    .onSuccess(startCb)
+    .onError(errorCb);
 
-   ev_run(loop);
+    ev_run(loop);
 
-   return 0;
+    return 0;
 
 }
