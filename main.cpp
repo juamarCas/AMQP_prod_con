@@ -6,10 +6,6 @@
 int main()
 {
 
-
-  
-
-
    auto *loop = EV_DEFAULT;
    MyHandler myHandler(loop);
    AMQP::Address address("amqp://guest:guest@localhost/");

@@ -1,7 +1,8 @@
 #include <ev.h>
 #include <amqpcpp.h>
 #include <amqpcpp/libev.h>
-
+#ifndef MY_HANDLER_H
+#define MY_HANDLER_H
 
 class MyHandler: public AMQP::LibEvHandler{
 
@@ -17,3 +18,5 @@ class MyHandler: public AMQP::LibEvHandler{
 public:
         MyHandler(struct ev_loop *loop): AMQP::LibEvHandler(loop){}
 };
+
+#endif
