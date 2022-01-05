@@ -18,16 +18,16 @@ typedef struct Consumer_callbacks{
     std::function<void()>&                      success_callback;
     std::function<void()>&                      start_callback;
     std::function<void()>&                      error_callback; 
-    std::function<void(std::string&& message)>& message_callback;
+    std::function<void(const std::string& message)>& message_callback;
 }C_callbacks;
 
 private: 
  
 public:
-    Consumer(std::string&& user, std::string&& password, std::string&& host, std::string&& vhost);
+    Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost);
     Consumer(const Consumer&) = delete;
 
-    void SetQueue(std::string&& queue, const std::function<void(void)>& callback); 
+    void SetQueue(const std::string& queue, const std::function<void(void)>& callback); 
 
     void Start();
 
