@@ -6,7 +6,7 @@
 class CAMQP{
 public: 
 
-    CAMQP(std::string&& user, std::string&& password, std::string&& host, std::string&& vhost):
+    CAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost):
     m_user(user), m_password(password), m_host(host), m_vhost(vhost)
     {
         
