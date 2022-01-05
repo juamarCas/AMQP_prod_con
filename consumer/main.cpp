@@ -2,6 +2,15 @@
 #include <string>
 #include "MyHandler.h"
 #include "json.hpp"
+#include "Consumer.h"
+
+#define DEBUG 1
+#define LOG(x) std::cout<<x<<std::endl
+
+void success_callback(); 
+void start_callback(); 
+void error_callback(); 
+void message_callback(const std::string& data);
 
 int main()
 {
@@ -15,8 +24,24 @@ int main()
             std::cout<<"declared queue"<<std::endl;
    });
 
+  // Consumer::C_callbacks cbb(ssc, stc, erc, msc); 
+  Consumer::C_callbacks cbb{
+	&success_callback, 
+	&start_callback, 
+	&error_callback, 
+	&message_callback
+  };
+   std::string name  = "juanito"; 
+   std::string pass  = "1234"; 
+   std::string host  = "/"; 
+   std::string vhost = " ";
+#if DEBUG
+	LOG("hey");
+#endif 
+   IAMQP * consumer = new Consumer(name, pass, host, vhost, cbb);
+   consumer->Start();
    // callback function that is called when the consume operation starts
-auto startCb = [](const std::string &consumertag) {
+   auto startCb = [](const std::string &consumertag) {
 
     std::cout << "consume operation started" << std::endl;
 };
@@ -52,5 +77,21 @@ channel
     ev_run(loop);
 
     return 0;
+
+}
+
+void success_callback(){
+
+}
+
+void start_callback(){
+	LOG("Hello world from callback");
+}
+
+void error_callback(){
+
+}
+
+void message_callback(const std::string& msg){
 
 }

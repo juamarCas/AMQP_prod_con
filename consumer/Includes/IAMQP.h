@@ -1,18 +1,22 @@
 #include <iostream>
 
-#ifndef CAMQP_H
-#define CAMQP_H
+#ifndef IAMQP_H
+#define IAMQP_H
 
-class CAMQP{
+class IAMQP{
 public: 
 
-    CAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost):
+    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost):
     m_user(user), m_password(password), m_host(host), m_vhost(vhost)
     {
         
-    } 
-    CAMQP(const CAMQP&) = delete; 
+    }
 
+    virtual ~IAMQP(){} 
+    IAMQP(const IAMQP&) = delete;
+
+   virtual void Start() = 0; 
+	
 protected:
     std::string m_user; 
     std::string m_password; 
