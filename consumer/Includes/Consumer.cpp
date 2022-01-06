@@ -6,6 +6,7 @@ IAMQP(user, password, host, vhost){
 }
 
 void Consumer::Start(){
+	
 	(m_callbacks ->start_callback)();
 }
 

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <queue>
 #include "MyHandler.h"
 #include "json.hpp"
 #include "Consumer.h"
@@ -23,9 +24,7 @@ int main()
    channel.declareQueue("myqueue").onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
             std::cout<<"declared queue"<<std::endl;
    });
-
-  // Consumer::C_callbacks cbb(ssc, stc, erc, msc); 
-  int a = 5; 
+ 
   auto success_cb = [](){}; 
   auto start_cb   = [](){std::cout<<"hello from cb!"<<std::endl;};
   auto error_cb   = [](){}; 
@@ -37,29 +36,26 @@ int main()
 	error_cb, 
 	message_cb
   };
-   std::string name  = "guest"; 
+   std::string user  = "guest"; 
    std::string pass  = "guest"; 
    std::string host  = "localhost"; 
    std::string vhost = "";
-#if DEBUG
-	LOG("hey");
-#endif 
-   IAMQP * consumer = new Consumer(name, pass, host, vhost, cbb);
+   IAMQP * consumer = new Consumer(user, pass, host, vhost, cbb);
    consumer->Start();
    // callback function that is called when the consume operation starts
-   auto startCb = [](const std::string &consumertag) {
+    auto startCb = [](const std::string &consumertag) {
 
     std::cout << "consume operation started" << std::endl;
-};
+    };
 
 // callback function that is called when the consume operation failed
-auto errorCb = [](const char *message) {
+    auto errorCb = [](const char *message) {
 
     std::cout << "consume operation failed" << std::endl;
-};
+    };
 
 // consume a message with JSON notation and parse it
-auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered) {
+    auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered) {
 
     std::cout << "message received:" << std::endl;
       
@@ -72,7 +68,7 @@ auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, 
     auto j_parsed = nlohmann::json::parse(j_final); 
     std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
     channel.ack(deliveryTag);
-};
+    };
 
 channel
     .consume("myqueue")

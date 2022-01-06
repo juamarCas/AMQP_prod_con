@@ -33,9 +33,10 @@ typedef struct Consumer_callbacks{
 
 private: 
 	C_callbacks * m_callbacks;
+    
 public:
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, C_callbacks& callbacks);
-   // Consumer(const Consumer&) = delete;
+    Consumer(const Consumer&) = delete;
     ~Consumer(){} 
 
     void SetQueue(const std::string& queue, const std::function<void(void)>& callback); 
