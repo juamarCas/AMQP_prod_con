@@ -25,10 +25,10 @@ public:
 a struct that contains callbacks for receiving data
 */
 typedef struct Consumer_callbacks{
-	void(*success_callback)(void);
-	void(*start_callback)(void);
-	void(*error_callback)(void); 
-	void(*message_callback)(const std::string&);
+	vf   success_callback;
+    vf   start_callback; 
+    vf   error_callback; 
+    vf_s message_callback;
 }C_callbacks;
 
 private: 

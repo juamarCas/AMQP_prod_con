@@ -25,16 +25,22 @@ int main()
    });
 
   // Consumer::C_callbacks cbb(ssc, stc, erc, msc); 
+  int a = 5; 
+  auto success_cb = [](){}; 
+  auto start_cb   = [](){std::cout<<"hello from cb!"<<std::endl;};
+  auto error_cb   = [](){}; 
+  auto message_cb = [](const std::string& message){};
+
   Consumer::C_callbacks cbb{
-	&success_callback, 
-	&start_callback, 
-	&error_callback, 
-	&message_callback
+	success_cb, 
+	start_cb, 
+	error_cb, 
+	message_cb
   };
-   std::string name  = "juanito"; 
-   std::string pass  = "1234"; 
-   std::string host  = "/"; 
-   std::string vhost = " ";
+   std::string name  = "guest"; 
+   std::string pass  = "guest"; 
+   std::string host  = "localhost"; 
+   std::string vhost = "";
 #if DEBUG
 	LOG("hey");
 #endif 
@@ -80,18 +86,3 @@ channel
 
 }
 
-void success_callback(){
-
-}
-
-void start_callback(){
-	LOG("Hello world from callback");
-}
-
-void error_callback(){
-
-}
-
-void message_callback(const std::string& msg){
-
-}
