@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <thread>
+#include <utility>
 #include "MyHandler.h"
 #include "json.hpp"
 #include "Consumer.h"
@@ -8,75 +10,38 @@
 #define DEBUG 1
 #define LOG(x) std::cout<<x<<std::endl
 
-void success_callback(); 
-void start_callback(); 
-void error_callback(); 
-void message_callback(const std::string& data);
-
 int main()
 {
-   auto *loop = EV_DEFAULT;
-   MyHandler myHandler(loop);
-   AMQP::Address address("amqp://guest:guest@localhost/");
-   AMQP::TcpConnection connection(&myHandler, address);
 
-   AMQP::TcpChannel channel(&connection);
-   channel.declareQueue("myqueue").onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-            std::cout<<"declared queue"<<std::endl;
-   });
- 
-  auto success_cb = [](){}; 
-  auto start_cb   = [](){std::cout<<"hello from cb!"<<std::endl;};
-  auto error_cb   = [](){}; 
-  auto message_cb = [](const std::string& message){};
+  auto success_cb = [](const std::string& consumertag){std::cout<<"hello from cb!"<<std::endl;};
+  auto error_cb   = [](const char *message){}; 
+  auto message_cb = [](const std::string& message){
+    LOG(message);
+  };
 
   Consumer::C_callbacks cbb{
-	success_cb, 
-	start_cb, 
-	error_cb, 
-	message_cb
+	  success_cb, 
+	  error_cb, 
+	  message_cb 
   };
    std::string user  = "guest"; 
    std::string pass  = "guest"; 
    std::string host  = "localhost"; 
    std::string vhost = "";
-   IAMQP * consumer = new Consumer(user, pass, host, vhost, cbb);
-   consumer->Start();
+   std::string queue = "myqueue";
+
+   IAMQP * consumer = new Consumer(user, pass, host, vhost, queue,cbb);
+   std::thread Consumer_Thread(
+      [&consumer](){
+        consumer->Start();
+      }
+   
+   );
+   Consumer_Thread.join(); 
    // callback function that is called when the consume operation starts
-    auto startCb = [](const std::string &consumertag) {
-
-    std::cout << "consume operation started" << std::endl;
-    };
-
-// callback function that is called when the consume operation failed
-    auto errorCb = [](const char *message) {
-
-    std::cout << "consume operation failed" << std::endl;
-    };
-
-// consume a message with JSON notation and parse it
-    auto messageCb = [&channel](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered) {
-
-    std::cout << "message received:" << std::endl;
-      
-
-    char j_receive[message.bodySize() + 1];
-    strncpy(j_receive, message.body(), message.bodySize() + 1); 
-    j_receive[message.bodySize()] = '\0'; 
-
-    std::string j_final = std::string(j_receive);
-    auto j_parsed = nlohmann::json::parse(j_final); 
-    std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
-    channel.ack(deliveryTag);
-    };
-
-channel
-    .consume("myqueue")
-    .onReceived(messageCb)
-    .onSuccess(startCb)
-    .onError(errorCb);
-
-    ev_run(loop);
+   // auto j_parsed = nlohmann::json::parse(j_final); 
+   // std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
+   
 
     return 0;
 
