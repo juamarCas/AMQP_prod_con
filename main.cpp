@@ -8,7 +8,7 @@ int main()
 
    auto *loop = EV_DEFAULT;
    MyHandler myHandler(loop);
-   AMQP::Address address("amqp://guest:guest@localhost/");
+   AMQP::Address address("amqp://test:test123@localhost/");
    AMQP::TcpConnection connection(&myHandler, address); 
 
    nlohmann::json j;
@@ -20,11 +20,11 @@ int main()
 
    std::string msg = j.dump(); 
    AMQP::TcpChannel channel(&connection);
-   channel.declareQueue("myqueue").onSuccess([&channel, msg](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+   channel.declareQueue("fp").onSuccess([&channel, msg](const std::string &name, uint32_t messageCount, uint32_t consumercount){
             std::cout<<"declared queue: myqueue"<<std::endl;
             while(1){        
                std::cin.get();  
-               channel.publish("", "myqueue", msg); 
+               channel.publish("", "fp", msg); 
             }
    });
 
