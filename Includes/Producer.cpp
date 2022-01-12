@@ -1,12 +1,50 @@
-Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, C_callbacks& callbacks):
+#include "Producer.h"
+
+Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, P_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue){
-    m_amqpState = IAMQP::QUEUE_ONLY;
+      
+     
 }
-Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, C_callbacks& callbacks):
+Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, P_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue, exchange){
-    m_amqpState = IAMQP::QUEUE_EXCHANGE;
+    
+    
 }
 
 void Producer::Start(){
-    
+  auto * loop = EV_DEFAULT; 
+  MyHandler m_myHandler(loop);
+  AMQP::Address m_address(m_url);
+  AMQP::TcpConnection m_connection(&m_myHandler, m_address);
+  AMQP::TcpChannel m_channel(&m_connection);
+  
+  //auto pub = 
+
+   PublishMSGLmbda = [&m_channel, this](const std::string& msg){
+      #if PRODUCER_DEBUG
+         std::cout<<"Publishing a message: "<<msg<<"!"<<std::endl;
+      #endif
+      m_channel.publish("", m_queue, msg); 
+   };
+  /* nlohmann::json j;
+   int var1 = 15; 
+   float var2 = 5.5; 
+
+   j["pos"]  = var1; 
+   j["temp"] = var2; 
+
+   std::string msg = j.dump();*/ 
+   m_channel.declareQueue(m_queue).onSuccess([&m_channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+      #if PRODUCER_DEBUG
+         std::cout<<"declared queue: "<<m_queue<<std::endl;
+      #endif
+   });
+
+   
+  isReady = true; 
+   ev_run(loop);
+}
+
+void Producer::PublishMsg(const std::string& msg){
+   (PublishMSGLmbda)(msg);
 }

@@ -7,7 +7,7 @@ IAMQP(user, password, host, vhost, queue){
 }
 
 Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange,C_callbacks& callbacks):
-IAMQP(user, password, host, vhost, queue){
+IAMQP(user, password, host, vhost, queue, exchange){
 	m_callbacks = &callbacks;
 	IAMQP::m_amqpState = IAMQP::QUEUE_EXCHANGE;
 }

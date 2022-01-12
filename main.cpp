@@ -1,36 +1,43 @@
 #include <iostream>
 #include <string>
+#include <thread>
 #include "json.hpp"
-#include "MyHandler.h"
+#include "Producer.h"
 
 int main()
 {
+   auto success_cb = [](const std::string& consumertag){
+    
+   };
+  auto error_cb   = [](const char *message){};
 
-   auto *loop = EV_DEFAULT;
-   MyHandler myHandler(loop);
-   AMQP::Address address("amqp://test:test123@localhost/");
-   AMQP::TcpConnection connection(&myHandler, address); 
+  /*message received as json format*/
+  auto message_cb = [](const std::string& message){
+    //auto j_parsed = nlohmann::json::parse(message); 
+    // std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n"; 
+  };
 
-   nlohmann::json j;
-   int var1 = 15; 
-   float var2 = 5.5; 
-
-   j["pos"]  = var1; 
-   j["temp"] = var2; 
-
-   std::string msg = j.dump(); 
-   AMQP::TcpChannel channel(&connection);
-   channel.declareQueue("fp").onSuccess([&channel, msg](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-            std::cout<<"declared queue: myqueue"<<std::endl;
-            while(1){        
-               std::cin.get();  
-               channel.publish("", "fp", msg); 
-            }
-   });
-
-
-   ev_run(loop);
-
+  Producer::P_callbacks cbb{
+	  success_cb, 
+	  error_cb, 
+	  message_cb 
+  };
+   std::string user     = "test"; 
+   std::string pass     = "test123"; 
+   std::string host     = "localhost"; 
+   std::string vhost    = "";
+   std::string queue    = "fp";
+   std::string exchange = "exchange"; 
+   Producer producer(user, pass, host, vhost, queue, cbb);
+   std::thread Producer_Thread(
+      [&producer](){
+        producer.Start();
+      }  
+   );
+   Producer_Thread.detach();
+   while(!producer.GetIsReady()){}
+   producer.PublishMsg("Hello"); 
+   while(1){}
    return 0;
 
 }

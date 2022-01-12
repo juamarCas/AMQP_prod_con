@@ -1,10 +1,7 @@
-#include <iostream>
-#include <functional>
-#include "MyHandler.h"
-#include "IAMQP.h"
 #ifndef CONSUMER_H
 #define CONSUMER_H
 #define CONSUMER_DEBUG 1
+#include "IAMQP.h"
 
 /**
 *@brief Class for consumer of AMQP broker
@@ -12,25 +9,19 @@
 
 class Consumer: public IAMQP{
 
-//Typedefs -------------------------------
-/**
-* @brief abbreviation for function declaration as variables
-*/
-    typedef std::function<void()>                        vf;  
-    typedef std::function<void(const std::string& msg)>  vf_s;
-    typedef std::function<void(const char *message)>     vf_ca; 
+
 
 public:
 /**
-*@brief callback structure. It uses the typedefs defined earlier
+*@brief callback structure. It uses the typedefs defined in IAMQP class
 *@brief success_callback is a function that will excecute once the client is connected to the broker
 *@brief error_callback is a function excecuted when an error ocurrs
 *@brief message_callback is a function that is called everytime a message is received
 */
     typedef struct Consumer_callbacks{
-        vf_s  success_callback; 
-        vf_ca error_callback; 
-        vf_s  message_callback;
+        IAMQP::vf_s  success_callback; 
+        IAMQP::vf_ca error_callback; 
+        IAMQP::vf_s  message_callback;
     }C_callbacks;
 
 private: 
@@ -43,7 +34,7 @@ public:
     *@param password Password to sign in to the AMQP broker
     *@param host IP address of the AMQP broker
     *@param vhost Vhost the user wants to sign in
-    *@param queuue AMQP queue the channel will subscribe
+    *@param queue AMQP queue the channel will subscribe
     *@param exchange AMQP exchange the queue will be binded
     *@param routingKey AMQP routing key for the channel
     *@param callbacks struct of functions defined by the user that will be excecuted depending of the action

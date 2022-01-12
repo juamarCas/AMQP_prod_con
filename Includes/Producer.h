@@ -1,17 +1,30 @@
 #ifndef PRODUCER_H
 #define PRODUCER_H
 #include "IAMQP.h"
+#include <utility>
+#define PRODUCER_DEBUG 1
 
 class Producer: public IAMQP{
-    public: 
 
+    public:
+        typedef struct Producer_callbacks{
+            IAMQP::vf_s  success_callback; 
+            IAMQP::vf_ca error_callback; 
+            IAMQP::vf_s  message_callback;
+        }P_callbacks;
     private: 
-        MyHandler           m_myHandler; 
-        AMQP::Adress        m_adress; 
-        AMQP::TcpConnection m_connection;
-        AMQP::TcpChannel    m_channel
-    public: 
+       
+        bool isReady; 
+        P_callbacks * m_callbacks;
+        IAMQP::vf_s   PublishMSGLmbda; 
+	    //AMQP::TcpChannel m_channel(AMQP::TcpConnection *);
 
+        /**
+        *@brief indicates whenever a queue, exchange o routing key is ready. Helper method to start the publisher
+        */
+        
+
+    public: 
         /**
         *@brief constructor for AMQP producer
         *@param user Username to sign in to the AMQP broker
@@ -23,16 +36,32 @@ class Producer: public IAMQP{
         *@param routingKey AMQP routing key for the channel
         *@param callbacks struct of functions defined by the user that will be excecuted depending of the action
         */
-        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, C_callbacks& callbacks);
-        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, C_callbacks& callbacks);
+        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, P_callbacks& callbacks);
+        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, P_callbacks& callbacks);
         
         /*
         *Not implemented yet
         */
-        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, C_callbacks& callbacks);
+        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, P_callbacks& callbacks);
+       
         Producer(const Producer&) = delete;
         ~Producer(){} 
         void Start(); 
+
+
+        /**
+        @brief publish a message to the AMQP server
+        @param queue, the queue the message is for
+        @param exchange, the exchange the message is for
+        @param routeKey, the routing ey the message is for
+        @param msg, actual message, duh
+        */
+        void PublishMsg(const std::string& msg);
+        void PublishMsg(const std::string& queue, const std::string& msg); 
+        void PublishMsg(const std::string& queue, const std::string& exchange, const std::string& msg);
+        void PublishMsg(const std::string& queue, const std::string& exchange, const std::string& routeKey, const std::string& msg);
+
+        inline bool GetIsReady(){ return isReady; }
 };
 
 #endif
