@@ -3,3 +3,5 @@ consumer/*.o
 *.o
 app
 consumer/app
+Project/app
+Project/*.o

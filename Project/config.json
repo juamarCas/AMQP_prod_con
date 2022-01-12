@@ -1,0 +1,18 @@
+{
+    "login":{
+        "username": "test", 
+        "password": "test123",
+        "host": "localhost", 
+        "vhost": "" 
+    },
+    "Consumer":{
+        "queue": "fp", 
+        "exchange": "fp", 
+        "routeKey": "fprk"
+    }, 
+    "Producer":{
+        "queue": "fp12", 
+        "exchange": "fp", 
+        "routeKey": "fprk12"
+    }
+}
