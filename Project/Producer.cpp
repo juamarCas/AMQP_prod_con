@@ -3,17 +3,16 @@
 Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, P_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue){
       
-     
 }
-Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, P_callbacks& callbacks):
-IAMQP(user, password, host, vhost, queue, exchange){
-    
-    
+
+Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks):
+IAMQP(user, password, host, vhost, queue, exchange, routingKey){
+     
 }
 
 void Producer::Start(){
-  auto * loop = EV_DEFAULT; 
-  MyHandler m_myHandler(loop);
+  auto * loop1 = ev_loop_new(0); 
+  MyHandler m_myHandler(loop1);
   AMQP::Address m_address(m_url);
   AMQP::TcpConnection m_connection(&m_myHandler, m_address);
   AMQP::TcpChannel m_channel(&m_connection);
@@ -41,8 +40,8 @@ void Producer::Start(){
    });
 
    
-  isReady = true; 
-   ev_run(loop);
+   isReady = true; 
+   ev_run(loop1);
 }
 
 void Producer::PublishMsg(const std::string& msg){

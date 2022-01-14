@@ -4,6 +4,9 @@
 #include <utility>
 #define PRODUCER_DEBUG 1
 
+/**
+*@brief Class object used to create a consumer client
+*/
 class Producer: public IAMQP{
 
     public:
@@ -37,12 +40,7 @@ class Producer: public IAMQP{
         *@param callbacks struct of functions defined by the user that will be excecuted depending of the action
         */
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, P_callbacks& callbacks);
-        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, P_callbacks& callbacks);
-        
-        /*
-        *Not implemented yet
-        */
-        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, P_callbacks& callbacks);
+        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks);
        
         Producer(const Producer&) = delete;
         ~Producer(){} 
@@ -50,11 +48,11 @@ class Producer: public IAMQP{
 
 
         /**
-        @brief publish a message to the AMQP server
-        @param queue, the queue the message is for
-        @param exchange, the exchange the message is for
-        @param routeKey, the routing ey the message is for
-        @param msg, actual message, duh
+        *@brief publish a message to the AMQP server
+        *@param queue, the queue the message is for
+        *@param exchange, the exchange the message is for
+        *@param routeKey, the routing ey the message is for
+        *@param msg, actual message, duh
         */
         void PublishMsg(const std::string& msg);
         void PublishMsg(const std::string& queue, const std::string& msg); 

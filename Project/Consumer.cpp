@@ -2,14 +2,12 @@
 
 Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, C_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue){
-	m_callbacks = &callbacks;
-	IAMQP::m_amqpState = IAMQP::QUEUE_ONLY;
+	m_callbacks = &callbacks;	
 }
 
-Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange,C_callbacks& callbacks):
-IAMQP(user, password, host, vhost, queue, exchange){
-	m_callbacks = &callbacks;
-	IAMQP::m_amqpState = IAMQP::QUEUE_EXCHANGE;
+Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf, C_callbacks& callbacks):
+IAMQP(user, password, host, vhost, queue, exchange, routingKey){
+	m_callbacks = &callbacks;	
 }
 
 
@@ -21,17 +19,21 @@ void Consumer::Start(){
 	#if CONSUMER_DEBUG
 		std::cout<<"entered to start"<<std::endl;
 	#endif
-
-	m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
-	auto *loop = EV_DEFAULT;
+	auto *loop = ev_loop_new(0);
 	MyHandler myHandler(loop);
 	AMQP::Address address(m_url);
 	AMQP::TcpConnection connection(&myHandler, address);
 	AMQP::TcpChannel channel(&connection);
 
 	channel.declareQueue(m_queue).onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+		#if CONSUMER_DEBUG
             std::cout<<"declared queue"<<std::endl;
+		#endif
    	});
+
+	if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE_RK){
+
+	}
 
 	auto messageCb = [&channel, this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
 #if CONSUMER_DEBUG
