@@ -24,10 +24,10 @@ private:
 public:
    
    typedef struct Queue_Exchange_Configure {
-       int QueueFlags, 
-       int ExchangeFlags,
-       AMPQ::ExchangeType ETypes
-   }QEConf
+       int QueueFlags;
+       int ExchangeFlags;
+       AMQP::ExchangeType ETypes;
+   }QEConf;
 
     IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue):
     m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue)
