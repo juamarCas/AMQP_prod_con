@@ -2,7 +2,7 @@
 #define PRODUCER_H
 #include "IAMQP.h"
 #include <utility>
-#define PRODUCER_DEBUG 1
+
 
 /**
 *@brief Class object used to create a consumer client
@@ -40,6 +40,7 @@ class Producer: public IAMQP{
         *@param callbacks struct of functions defined by the user that will be excecuted depending of the action
         */
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, P_callbacks& callbacks);
+        Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, IAMQP::QEConf conf, P_callbacks& callbacks);
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks);
        
         Producer(const Producer&) = delete;
@@ -58,6 +59,10 @@ class Producer: public IAMQP{
         void PublishMsg(const std::string& queue, const std::string& msg); 
         void PublishMsg(const std::string& queue, const std::string& exchange, const std::string& msg);
         void PublishMsg(const std::string& queue, const std::string& exchange, const std::string& routeKey, const std::string& msg);
+
+        /*topic usage methods*/
+        void Subscribe(const std::string& topic);
+        void PublishToTopic(const std::string& msg, const std::string& topic);
 
         inline bool GetIsReady(){ return isReady; }
 };

@@ -36,15 +36,15 @@ public:
         m_amqpState = QUEUE_ONLY;
     }
 
-    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange):
-    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue)
+    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, QEConf qeconf):
+    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue), m_exchange(exchange), m_conf(qeconf)
     {
         m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
         m_amqpState = QUEUE_EXCHANGE;
     }
 
     IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, QEConf qeconf):
-    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue), m_exchange(exchange), m_routeKey(routingKey)
+    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue), m_exchange(exchange), m_routeKey(routingKey), m_conf(qeconf)
     {
         m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
         m_amqpState = QUEUE_EXCHANGE_RK; 
@@ -57,6 +57,8 @@ public:
     IAMQP &operator=(const IAMQP &IAMQP) = delete;
 
     virtual void Start() = 0;
+    virtual void Subscribe(const std::string& topic) = 0;
+    virtual void PublishToTopic(const std::string& msg, const std::string& topic) = 0;
 
 protected:
     std::string m_user;
@@ -71,7 +73,7 @@ protected:
     std::string m_url;
 
     int m_flags;
-
+    QEConf m_conf;
     AMQP::ExchangeType m_types;
 
     inline AMQP_STATE Get_AMQP_State(){

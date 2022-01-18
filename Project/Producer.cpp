@@ -5,6 +5,12 @@ IAMQP(user, password, host, vhost, queue){
       
 }
 
+Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, IAMQP::QEConf conf, P_callbacks& callbacks):
+IAMQP(user, password, host, vhost, queue, exchange, conf){
+	
+}
+
+
 Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
      
@@ -20,7 +26,7 @@ void Producer::Start(){
   //auto pub = 
 
    PublishMSGLmbda = [&m_channel, this](const std::string& msg){
-      #if PRODUCER_DEBUG
+      #if DEBUG
          std::cout<<"Publishing a message: "<<msg<<"!"<<std::endl;
       #endif
       m_channel.publish("", m_queue, msg); 
@@ -34,7 +40,7 @@ void Producer::Start(){
 
    std::string msg = j.dump();*/ 
    m_channel.declareQueue(m_queue).onSuccess([&m_channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-      #if PRODUCER_DEBUG
+      #if DEBUG
          std::cout<<"declared queue: "<<m_queue<<std::endl;
       #endif
    });
@@ -46,4 +52,12 @@ void Producer::Start(){
 
 void Producer::PublishMsg(const std::string& msg){
    (PublishMSGLmbda)(msg);
+}
+
+void Producer::Subscribe(const std::string& topic){
+
+}
+
+void Producer::PublishToTopic(const std::string& msg, const std::string& topic){
+
 }

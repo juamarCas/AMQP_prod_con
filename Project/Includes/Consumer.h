@@ -40,6 +40,7 @@ public:
     *@param callbacks struct of functions defined by the user that will be excecuted depending of the action
     */
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, C_callbacks& callbacks);
+    Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const Consumer&) = delete;
     ~Consumer(){} 
@@ -51,6 +52,9 @@ public:
     */
     void Start();
 
+    /*Topic usage methods*/
+    void Subscribe(const std::string& topic);
+    void PublishToTopic(const std::string& msg, const std::string& topic);
 };
 
 #endif

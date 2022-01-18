@@ -9,10 +9,18 @@
 
 int main(){
 
-    IAMQP::QEConf conf;
+    IAMQP::QEConf p_conf;
+    p_conf.QueueFlags    = 0; 
+    p_conf.ExchangeFlags = 0;
+    p_conf.ETypes        = AMQP::topic;
+
+    IAMQP::QEConf c_conf; 
+    c_conf.QueueFlags    = 0; 
+    c_conf.ExchangeFlags = 0;
+    c_conf.ETypes        = AMQP::topic;
 
     /*json labels
-    *consts with car means "characteristic", like name for example
+    *consts with 'car' means "characteristic", like name for example
     */
     static const std::string json_path  = "./config.json";
 
@@ -76,7 +84,12 @@ int main(){
     int consumer_e_flags = 0; 
 
     /*Consumer exchange type*/
-    AMQP::ExchangeType consumer_e_type; 
+    std::string consumer_e_type = j[j_consumer][j_exchange][j_car_type];
+    if(consumer_e_type == "topic"){
+        c_conf.ETypes = AMQP::topic;
+    }else if(consumer_e_type == "fanout"){
+        
+    }
 
     /*Producer*/
     std::string producer_queue    = j[j_producer][j_queue][j_car_name];
@@ -97,7 +110,13 @@ int main(){
     int producer_e_flags = 0; 
 
     /*Producer exchange type*/
-    AMQP::ExchangeType producer_e_type; 
+    std::string producer_e_type = j[j_producer][j_exchange][j_car_type];
+    if(producer_e_type == "topic"){
+        p_conf.ETypes = AMQP::topic;
+    }else if(producer_e_type == "fanout"){
+
+    }
+    
 
     std::cout<<username<<std::endl; 
 
@@ -141,8 +160,8 @@ int main(){
 	  message_cb
   };
 
-    Consumer c(username, password, host, vhost, consumer_queue, cbb1);
-    Producer p(username, password, host, vhost, producer_queue, cbb); 
+    Consumer c(username, password, host, vhost, consumer_queue, consumer_exchange, c_conf,cbb1);
+    Producer p(username, password, host, vhost, producer_queue, producer_exchange, p_conf,cbb); 
 
     std::thread Producer_thread(
         [&p](){

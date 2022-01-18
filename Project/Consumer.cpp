@@ -5,6 +5,11 @@ IAMQP(user, password, host, vhost, queue){
 	m_callbacks = &callbacks;	
 }
 
+Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, IAMQP::QEConf conf, C_callbacks& callbacks):
+IAMQP(user, password, host, vhost, queue, exchange, conf){
+	m_callbacks = &callbacks;
+}
+
 Consumer::Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf, C_callbacks& callbacks):
 IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
 	m_callbacks = &callbacks;	
@@ -16,7 +21,7 @@ IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
 */
 void Consumer::Start(){
 	
-	#if CONSUMER_DEBUG
+	#if DEBUG
 		std::cout<<"entered to start"<<std::endl;
 	#endif
 	auto *loop = ev_loop_new(0);
@@ -26,17 +31,19 @@ void Consumer::Start(){
 	AMQP::TcpChannel channel(&connection);
 
 	channel.declareQueue(m_queue).onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-		#if CONSUMER_DEBUG
+		#if DEBUG
             std::cout<<"declared queue"<<std::endl;
 		#endif
    	});
 
 	if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE_RK){
 
+	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE){
+		channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags);
 	}
 
 	auto messageCb = [&channel, this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
-#if CONSUMER_DEBUG
+#if DEBUG
 		std::cout << "message received!!" << std::endl;
 #endif
 		char msg_receive[message.bodySize() + 1];
@@ -55,3 +62,10 @@ void Consumer::Start(){
 	ev_run(loop);
 }
 
+void Consumer::Subscribe(const std::string& topic){
+
+}
+
+void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
+   
+}
