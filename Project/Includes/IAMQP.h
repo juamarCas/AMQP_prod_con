@@ -1,9 +1,10 @@
+#ifndef IAMQP_H
+#define IAMQP_H
+
+#define IAMQP_DEBUG 1
 #include <iostream>
 #include <functional>
 #include "MyHandler.h"
-#ifndef IAMQP_H
-#define IAMQP_H
-#define IAMQP_DEBUG 1
 
 class IAMQP{
 
@@ -22,7 +23,6 @@ private:
     AMQP_STATE m_amqpState;
 
 public:
-   
    typedef struct Queue_Exchange_Configure {
        int QueueFlags;
        int ExchangeFlags;
@@ -34,6 +34,13 @@ public:
     {
         m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
         m_amqpState = QUEUE_ONLY;
+    }
+
+    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange):
+    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_queue(queue)
+    {
+        m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
+        m_amqpState = QUEUE_EXCHANGE;
     }
 
     IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, QEConf qeconf):

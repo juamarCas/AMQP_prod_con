@@ -10,7 +10,7 @@
             "name": "fp", 
             "durable":{
                 "value": 1,
-                "enable": true 
+                "enable": true
             }, 
             "autodelete":{
                 "value": 2,
@@ -33,17 +33,21 @@
             }, 
             "autodelete":{
                 "value": 2,
-                "enable": 0
+                "enable": false
             }, 
             "passive":{
                 "value": 4, 
-                "enable": 0
+                "enable": false
             }, 
             "internal": {
                 "value": 65536, 
-                "enable": 0
+                "enable": false
             }, 
-            "type": "fanout"
+            "type": "fanout", 
+            "topic":{
+                "enable": false, 
+                "topics":[]
+            }
         }, 
         "routeKey": "fprk"
     }, 
@@ -85,7 +89,11 @@
                 "value": 65536, 
                 "enable": 0
             }, 
-            "type": "fanout"
+            "type": "fanout", 
+            "topic":{
+                "enable": false, 
+                "topics":[]
+            }
         }, 
         "routeKey": "fprk12"
     }

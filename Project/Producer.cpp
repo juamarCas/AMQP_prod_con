@@ -6,7 +6,7 @@ IAMQP(user, password, host, vhost, queue){
 }
 
 Producer::Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks):
-IAMQP(user, password, host, vhost, queue, exchange, routingKey){
+IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
      
 }
 

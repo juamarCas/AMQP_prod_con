@@ -8,6 +8,9 @@
 #define LOG(x) std::cout<<x<<std::endl;
 
 int main(){
+
+    IAMQP::QEConf conf;
+
     /*json labels
     *consts with car means "characteristic", like name for example
     */
@@ -28,12 +31,15 @@ int main(){
     static const std::string j_car_exclusive   = "exclusive";
     static const std::string j_car_internal    = "internal"; 
     static const std::string j_car_type        = "type";
+    static const std::string j_car_enable      = "enable";
 
     static const std::string j_flag_durable    = "durable";
     static const std::string j_flag_autodelete = "autodelete";
     static const std::string j_flag_passive    = "passive";
     static const std::string j_flag_exclusive  = "exclusive";
     static const std::string j_flag_internal   = "internal";
+
+    static const std::string j_topic           = "topic"; 
 
     static const std::string j_queue           = "queue";
     static const std::string j_exchange        = "exchange";
@@ -56,17 +62,17 @@ int main(){
     std::string consumer_rk       = j[j_consumer][j_routeKey];
     
     /*Consumer queue flags*/
-    bool consumer_q_durable    = j[j_consumer][j_queue][j_flag_durable][enable]
-    bool consumer_q_autodelete = j[j_consumer][j_queue][j_flag_autodelete][enable]
-    bool consumer_q_passive    = j[j_consumer][j_queue][j_flag_passive][enable]
-    bool consumer_q_exclusive  = j[j_consumer][j_queue][j_flag_exclusive][enable]
+    bool consumer_q_durable    = j[j_consumer][j_queue][j_flag_durable][j_car_enable];
+    bool consumer_q_autodelete = j[j_consumer][j_queue][j_flag_autodelete][j_car_enable];
+    bool consumer_q_passive    = j[j_consumer][j_queue][j_flag_passive][j_car_enable];
+    bool consumer_q_exclusive  = j[j_consumer][j_queue][j_flag_exclusive][j_car_enable];
     int consumer_q_flags = 0;
     
     /*Consumer exchange flags*/
-    bool consumer_e_durable    = j[j_consumer][j_exchange][j_flag_durable][enable]
-    bool consumer_e_autodelete = j[j_consumer][j_exchange][j_flag_autodelete][enable]
-    bool consumer_e_passive    = j[j_consumer][j_exchange][j_flag_passive][enable]
-    bool consumer_e_internal   = j[j_consumer][j_exchange][j_flag_internal][enable]
+    bool consumer_e_durable    = j[j_consumer][j_exchange][j_flag_durable][j_car_enable];
+    bool consumer_e_autodelete = j[j_consumer][j_exchange][j_flag_autodelete][j_car_enable];
+    bool consumer_e_passive    = j[j_consumer][j_exchange][j_flag_passive][j_car_enable];
+    bool consumer_e_internal   = j[j_consumer][j_exchange][j_flag_internal][j_car_enable];
     int consumer_e_flags = 0; 
 
     /*Consumer exchange type*/
@@ -77,8 +83,26 @@ int main(){
     std::string producer_exchange = j[j_producer][j_exchange][j_car_name];
     std::string producer_rk       = j[j_producer][j_routeKey];
 
+    /*Producer queue flags*/
+    bool producer_q_durable    = j[j_producer][j_queue][j_flag_durable][j_car_enable];
+    bool producer_q_autodelete = j[j_producer][j_queue][j_flag_autodelete][j_car_enable];
+    bool producer_q_passive    = j[j_producer][j_queue][j_flag_passive][j_car_enable];
+    bool producer_q_exclusive  = j[j_producer][j_queue][j_flag_exclusive][j_car_enable];
+
+    /*Producer exchange flags*/
+    bool producer_e_durable    = j[j_producer][j_exchange][j_flag_durable][j_car_enable];
+    bool producer_e_autodelete = j[j_producer][j_exchange][j_flag_autodelete][j_car_enable];
+    bool producer_e_passive    = j[j_producer][j_exchange][j_flag_passive][j_car_enable];
+    bool producer_e_internal   = j[j_producer][j_exchange][j_flag_internal][j_car_enable];
+    int producer_e_flags = 0; 
+
+    /*Producer exchange type*/
+    AMQP::ExchangeType producer_e_type; 
+
     std::cout<<username<<std::endl; 
 
+
+/*Configuration for the producer and consumer*/
   auto success_cb1 = [](const std::string& consumertag){
     
   };
