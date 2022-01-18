@@ -15,9 +15,13 @@ protected:
     /**
     * @brief abbreviation for function declaration as variables
     */
-    typedef std::function<void()>                        vf;
-    typedef std::function<void(const std::string& msg)>  vf_s;
-    typedef std::function<void(const char *message)>     vf_ca;
+    typedef std::function<void()>                                                 vf;
+    typedef std::function<void(const std::string& str)>                           vf_s;
+    typedef std::function<void(const std::string& str1, const std::string& str2)> vf_ss;
+    typedef std::function<void(const char *message)>                              vf_ca;
+
+    vf_s  subscribeTopicLmda;
+    vf_ss publishToTopicLmda;
 
 private:
     AMQP_STATE m_amqpState;
@@ -75,7 +79,7 @@ protected:
     int m_flags;
     QEConf m_conf;
     AMQP::ExchangeType m_types;
-
+    bool isReady; 
     inline AMQP_STATE Get_AMQP_State(){
         return m_amqpState;
     }

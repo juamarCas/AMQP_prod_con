@@ -17,7 +17,7 @@ class Producer: public IAMQP{
         }P_callbacks;
     private: 
        
-        bool isReady; 
+        
         P_callbacks * m_callbacks;
         IAMQP::vf_s   PublishMSGLmbda; 
 	    //AMQP::TcpChannel m_channel(AMQP::TcpConnection *);

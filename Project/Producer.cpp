@@ -45,6 +45,21 @@ void Producer::Start(){
       #endif
    });
 
+   if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE_RK){
+
+	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE){
+		m_channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags);
+
+		if(m_conf.ETypes == AMQP::topic){
+			subscribeTopicLmda = [&m_channel, this](const std::string& topic){
+				m_channel.bindQueue(m_exchange, m_queue, topic);
+			};
+
+			publishToTopicLmda = [&m_channel, this](const std::string& msg, const std::string& topic){
+				m_channel.publish(m_exchange, topic, msg.c_str());
+			};
+		}
+	}
    
    isReady = true; 
    ev_run(loop1);
@@ -55,9 +70,9 @@ void Producer::PublishMsg(const std::string& msg){
 }
 
 void Producer::Subscribe(const std::string& topic){
-
+   (subscribeTopicLmda)(topic);
 }
 
 void Producer::PublishToTopic(const std::string& msg, const std::string& topic){
-
+   (publishToTopicLmda)(msg, topic);
 }

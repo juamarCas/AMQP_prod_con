@@ -20,7 +20,7 @@ IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
 * starts the consumer operations and prepare messages from broker to be sent
 */
 void Consumer::Start(){
-	
+	isReady = false;
 	#if DEBUG
 		std::cout<<"entered to start"<<std::endl;
 	#endif
@@ -40,6 +40,16 @@ void Consumer::Start(){
 
 	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE){
 		channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags);
+
+		if(m_conf.ETypes == AMQP::topic){
+			subscribeTopicLmda = [&channel, this](const std::string& topic){
+				channel.bindQueue(m_exchange, m_queue, topic);
+			};
+
+			publishToTopicLmda = [&channel, this](const std::string& msg, const std::string& topic){
+				channel.publish(m_exchange, topic, msg.c_str());
+			};
+		}
 	}
 
 	auto messageCb = [&channel, this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
@@ -59,13 +69,14 @@ void Consumer::Start(){
     .onReceived(messageCb)
     .onSuccess(m_callbacks->success_callback)
     .onError(m_callbacks->error_callback);
+	isReady = true;
 	ev_run(loop);
 }
 
 void Consumer::Subscribe(const std::string& topic){
-
+	(subscribeTopicLmda)(topic);
 }
 
 void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
-   
+   (publishToTopicLmda)(msg, topic);
 }

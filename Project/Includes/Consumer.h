@@ -55,6 +55,7 @@ public:
     /*Topic usage methods*/
     void Subscribe(const std::string& topic);
     void PublishToTopic(const std::string& msg, const std::string& topic);
+    inline bool GetIsReady(){ return isReady; }
 };
 
 #endif
