@@ -10,7 +10,8 @@ class IAMQP{
 
 protected:
     /*used to know which construtor was called*/
-    enum AMQP_STATE {QUEUE_ONLY = 0, QUEUE_EXCHANGE, QUEUE_EXCHANGE_RK};
+    enum AMQP_STATE {QUEUE_ONLY = 0, QUEUE_EXCHANGE, QUEUE_EXCHANGE_RK, EXCHANGE_ONLY, SERVER_ASSIGNS};
+
     //Typedefs -------------------------------
     /**
     * @brief abbreviation for function declaration as variables
@@ -45,6 +46,20 @@ public:
     {
         m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
         m_amqpState = QUEUE_EXCHANGE;
+    }
+
+    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& exchange, QEConf qeconf):
+    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_exchange(exchange), m_conf(qeconf)
+    {
+        m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
+        m_amqpState = EXCHANGE_ONLY;
+    }
+
+    IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, QEConf qeconf):
+    m_user(user), m_password(password), m_host(host), m_vhost(vhost), m_conf(qeconf)
+    {
+        m_url = "amqp://" + m_user + ":" + m_password + "@" + m_host + "/" + m_vhost;
+        m_amqpState = SERVER_ASSIGNS;
     }
 
     IAMQP(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, QEConf qeconf):

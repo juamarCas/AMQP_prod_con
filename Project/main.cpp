@@ -111,10 +111,11 @@ int main(){
 
     /*Producer exchange type*/
     std::string producer_e_type = j[j_producer][j_exchange][j_car_type];
+    
     if(producer_e_type == "topic"){
         p_conf.ETypes = AMQP::topic;
     }else if(producer_e_type == "fanout"){
-
+        p_conf.ETypes = AMQP::fanout;
     }
     
 
@@ -187,9 +188,12 @@ int main(){
     js["temp"] = var2; 
     c.Subscribe("hello.world");
     std::string msg = js.dump();
+    int counter = 0; 
     while(1){
+
         std::cin.get();
-        p.PublishToTopic("hello from topic", "hello.world");
+        p.PublishToTopic("hello from topic" + std::to_string(counter), "hello.world");
+        counter++;
        //p.PublishMsg(msg); 
     }
 
