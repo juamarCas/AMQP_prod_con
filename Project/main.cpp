@@ -118,7 +118,7 @@ int main(){
     }
     
 
-    std::cout<<username<<std::endl; 
+    //std::cout<<username<<std::endl; 
 
 
 /*Configuration for the producer and consumer*/
@@ -185,11 +185,12 @@ int main(){
 
     js["pos"]  = var1; 
     js["temp"] = var2; 
-
+    c.Subscribe("hello.world");
     std::string msg = js.dump();
     while(1){
         std::cin.get();
-        p.PublishMsg(msg); 
+        p.PublishToTopic("hello from topic", "hello.world");
+       //p.PublishMsg(msg); 
     }
 
     return 0; 

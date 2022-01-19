@@ -1,7 +1,7 @@
 {
     "login":{
-        "username": "test", 
-        "password": "test123",
+        "username": "guest", 
+        "password": "guest",
         "host": "localhost", 
         "vhost": "" 
     },
@@ -29,7 +29,7 @@
             "name": "fpex", 
             "durable":{
                 "value": 1,
-                "enable": 1
+                "enable": true
             }, 
             "autodelete":{
                 "value": 2,
@@ -56,38 +56,38 @@
             "name": "fp", 
             "durable": {
                 "value": 1,
-                "enable": 1
+                "enable": true
             }, 
             "autodelete": {
                 "value": 2,
-                "enable": 0
+                "enable": false
             }, 
             "passive": {
                 "value": 4, 
-                "enable": 0
+                "enable": false
             }, 
             "exclusive":{
                 "value": 8, 
-                "enable": 0
+                "enable": false
             }
         }, 
         "exchange": {
             "name": "fpex", 
             "durable":{
                 "value": 1,
-                "enable": 1
+                "enable": true
             }, 
             "autodelete":{
                 "value": 2,
-                "enable": 0
+                "enable": false
             }, 
             "passive":{
                 "value": 4, 
-                "enable": 0
+                "enable": false
             }, 
             "internal": {
                 "value": 65536, 
-                "enable": 0
+                "enable": false
             }, 
             "type": "fanout", 
             "topic":{
