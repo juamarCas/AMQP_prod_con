@@ -3,7 +3,7 @@
 #include "IAMQP.h"
 #include <utility>
 
-
+#define DEBUG 1
 /**
 *@brief Class object used to create a consumer client
 */
@@ -16,8 +16,7 @@ class Producer: public IAMQP{
             IAMQP::vf_s  message_callback;
         }P_callbacks;
     private: 
-       
-        
+    
         P_callbacks * m_callbacks;
         IAMQP::vf_s   PublishMSGLmbda; 
 	    //AMQP::TcpChannel m_channel(AMQP::TcpConnection *);

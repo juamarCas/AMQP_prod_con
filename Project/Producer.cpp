@@ -36,19 +36,19 @@ void Producer::Start(){
       #if DEBUG
          std::cout<<"Publishing a message: "<<msg<<"!"<<std::endl;
       #endif
-      m_channel.publish("", m_queue, msg); 
+      m_channel.publish(m_exchange, "", msg); 
    };
   
    if(Get_AMQP_State() != EXCHANGE_ONLY){
-      m_channel.declareQueue(m_queue).onSuccess([&m_channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+      m_channel.declareQueue(m_queue, m_conf.QueueFlags).onSuccess([&m_channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
          #if DEBUG
-            std::cout<<"declared queue: "<<m_queue<<std::endl;
+            std::cout<<"producer declared queue: "<<m_queue<<std::endl;
          #endif
       });
    }else{
       m_channel.declareQueue(m_conf.QueueFlags).onSuccess([&m_channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
          #if DEBUG
-            std::cout<<"declared queue with no name!"<<std::endl;
+            std::cout<<"producer declared queue with no name!"<<std::endl;
          #endif
          m_queue = name;
       });
@@ -58,20 +58,21 @@ void Producer::Start(){
    if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE_RK){
 
 	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE || Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
-		m_channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([&m_channel, this](){
-         #if DEBUG
-            std::cout<<"producer has binded its queue "<<m_queue<<"to exchange: "<<m_exchange<<std::endl;
-         #endif
-         if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
+		
+      /*Check if the exchange exists first*/
+      m_channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([&m_channel, this](){
+        #if DEBUG
+            std::cout<<"consumer confirms the exchange exists!"<<std::endl;
+        #endif    
+        if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
             #if DEBUG
-               std::cout<<"binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
+               std::cout<<"cproducer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
             #endif
-            m_channel.bindQueue(m_exchange, m_queue, "");
-         }  
+              m_channel.bindQueue(m_exchange, m_queue, "");
+        }
 
       });
 
-      
 
 		if(m_conf.ETypes == AMQP::topic){
 			subscribeTopicLmda = [&m_channel, this](const std::string& topic){

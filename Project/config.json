@@ -22,7 +22,7 @@
             },
             "exclusive":{
                 "value": 8,
-                "enable": false
+                "enable": true
             }
         }, 
         "exchange": {
@@ -68,7 +68,7 @@
             }, 
             "exclusive":{
                 "value": 8, 
-                "enable": false
+                "enable": true
             }
         }, 
         "exchange": {

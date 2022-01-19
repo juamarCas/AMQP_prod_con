@@ -1,3 +1,5 @@
+#define DEBUG 1
+
 #include <iostream>
 #include <thread>
 #include <fstream>
@@ -6,7 +8,6 @@
 #include "json.hpp"
 
 #define LOG(x) std::cout<<x<<std::endl;
-
 int main(){
 
     IAMQP::QEConf p_conf;
@@ -83,12 +84,16 @@ int main(){
     bool consumer_e_internal   = j[j_consumer][j_exchange][j_flag_internal][j_car_enable];
     int consumer_e_flags = 0; 
 
+    if(consumer_q_exclusive){
+        c_conf.QueueFlags += AMQP::exclusive;
+    }
+
     /*Consumer exchange type*/
     std::string consumer_e_type = j[j_consumer][j_exchange][j_car_type];
     if(consumer_e_type == "topic"){
         c_conf.ETypes = AMQP::topic;
     }else if(consumer_e_type == "fanout"){
-        
+        c_conf.ETypes = AMQP::fanout;
     }
 
     /*Producer*/
@@ -101,6 +106,14 @@ int main(){
     bool producer_q_autodelete = j[j_producer][j_queue][j_flag_autodelete][j_car_enable];
     bool producer_q_passive    = j[j_producer][j_queue][j_flag_passive][j_car_enable];
     bool producer_q_exclusive  = j[j_producer][j_queue][j_flag_exclusive][j_car_enable];
+
+    if(producer_q_exclusive){
+        
+        #if DEBUG
+            std::cout<<"declared"<<std::endl;
+        #endif
+        p_conf.QueueFlags += AMQP::exclusive;
+    }
 
     /*Producer exchange flags*/
     bool producer_e_durable    = j[j_producer][j_exchange][j_flag_durable][j_car_enable];
@@ -117,10 +130,6 @@ int main(){
     }else if(producer_e_type == "fanout"){
         p_conf.ETypes = AMQP::fanout;
     }
-    
-
-    //std::cout<<username<<std::endl; 
-
 
 /*Configuration for the producer and consumer*/
   auto success_cb1 = [](const std::string& consumertag){
@@ -161,8 +170,8 @@ int main(){
 	  message_cb
   };
 
-    Consumer c(username, password, host, vhost, consumer_queue, consumer_exchange, c_conf,cbb1);
-    Producer p(username, password, host, vhost, producer_queue, producer_exchange, p_conf,cbb); 
+    Consumer c(username, password, host, vhost, consumer_exchange, c_conf,cbb1);
+    Producer p(username, password, host, vhost, producer_exchange, p_conf,cbb); 
 
     std::thread Producer_thread(
         [&p](){
@@ -186,15 +195,11 @@ int main(){
 
     js["pos"]  = var1; 
     js["temp"] = var2; 
-    c.Subscribe("hello.world");
     std::string msg = js.dump();
-    int counter = 0; 
     while(1){
 
         std::cin.get();
-        p.PublishToTopic("hello from topic" + std::to_string(counter), "hello.world");
-        counter++;
-       //p.PublishMsg(msg); 
+        p.PublishMsg(msg); 
     }
 
     return 0; 
