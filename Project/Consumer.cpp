@@ -74,9 +74,21 @@ void Consumer::Start(){
 }
 
 void Consumer::Subscribe(const std::string& topic){
+	if(m_conf.ETypes != AMQP::topic){
+      #if DEBUG
+      std::cout<<"You are not using topic exchange type!"<<std::endl;
+      #endif
+      return;
+   }
 	(subscribeTopicLmda)(topic);
 }
 
 void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
+	if(m_conf.ETypes != AMQP::topic){
+      #if DEBUG
+      std::cout<<"You are not using topic exchange type!"<<std::endl;
+      #endif
+      return;
+   }
    (publishToTopicLmda)(msg, topic);
 }

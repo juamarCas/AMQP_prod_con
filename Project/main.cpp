@@ -176,6 +176,8 @@ int main(){
             c.Start(); 
         }
     );
+    while(!c.GetIsReady()){}
+    
     Consumer_thread.detach(); 
     nlohmann::json js;
     int var1 = 15; 

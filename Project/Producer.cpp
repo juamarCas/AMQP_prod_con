@@ -22,8 +22,6 @@ void Producer::Start(){
   AMQP::Address m_address(m_url);
   AMQP::TcpConnection m_connection(&m_myHandler, m_address);
   AMQP::TcpChannel m_channel(&m_connection);
-  
-  //auto pub = 
 
    PublishMSGLmbda = [&m_channel, this](const std::string& msg){
       #if DEBUG
@@ -70,9 +68,21 @@ void Producer::PublishMsg(const std::string& msg){
 }
 
 void Producer::Subscribe(const std::string& topic){
+   if(m_conf.ETypes != AMQP::topic){
+      #if DEBUG
+      std::cout<<"You are not using topic exchange type!"<<std::endl;
+      #endif
+      return;
+   }
    (subscribeTopicLmda)(topic);
 }
 
 void Producer::PublishToTopic(const std::string& msg, const std::string& topic){
+   if(m_conf.ETypes != AMQP::topic){
+      #if DEBUG
+      std::cout<<"You are not using topic exchange type!"<<std::endl;
+      #endif
+      return;
+   }
    (publishToTopicLmda)(msg, topic);
 }
