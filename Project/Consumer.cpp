@@ -31,7 +31,7 @@ IAMQP(user, password, host, vhost, queue, exchange, routingKey, conf){
 */
 void Consumer::Start(){
 	isReady = false;
-	#if DEBUG
+	#ifdef DEBUG
 		std::cout<<"entered to start"<<std::endl;
 	#endif
 	m_loop = ev_loop_new(0); 
@@ -41,20 +41,20 @@ void Consumer::Start(){
   	m_channel = new AMQP::TcpChannel(m_connection);
 
 	m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-		#if DEBUG
+		#ifdef DEBUG
             std::cout<<"consumer declared queue"<<std::endl;
 		#endif
    	});
 
 	if(Get_AMQP_State() != EXCHANGE_ONLY){
         m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-        #if DEBUG
+        #ifdef DEBUG
         std::cout<<"consumer declared queue: "<<m_queue<<std::endl;
         #endif
       });
    }else{
       	m_channel->declareQueue(m_conf.QueueFlags).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-        #if DEBUG
+        #ifdef DEBUG
         std::cout<<"consumer declared queue with no name!"<<std::endl;
         #endif
         m_queue = name;
@@ -67,14 +67,14 @@ void Consumer::Start(){
 	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE || Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
 		 /*Check if the exchange exists first*/
         m_channel->declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([this](){
-        #if DEBUG
+        #ifdef DEBUG
             std::cout<<"consumer confirms the exchange exists!"<<std::endl;
         #endif
 
     	   
           
         if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
-            #if DEBUG
+            #ifdef DEBUG
             std::cout<<"consumer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
             #endif
             m_channel->bindQueue(m_exchange, m_queue, "");
@@ -85,7 +85,7 @@ void Consumer::Start(){
 	}
 
 	auto messageCb = [this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
-#if DEBUG
+#ifdef DEBUG
 		std::cout << "message received!!" << std::endl;
 #endif
 		char msg_receive[message.bodySize() + 1];
@@ -107,7 +107,7 @@ void Consumer::Start(){
 
 void Consumer::Subscribe(const std::string& topic){
 	if(m_conf.ETypes != AMQP::topic){
-      #if DEBUG
+      #ifdef DEBUG
       std::cout<<"You are not using topic exchange type!"<<std::endl;
       #endif
       return;
@@ -117,7 +117,7 @@ void Consumer::Subscribe(const std::string& topic){
 
 void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
 	if(m_conf.ETypes != AMQP::topic){
-      #if DEBUG
+      #ifdef DEBUG
       std::cout<<"You are not using topic exchange type!"<<std::endl;
       #endif
       return;

@@ -2,8 +2,6 @@
 #define PRODUCER_H
 #include "IAMQP.h"
 #include <utility>
-
-#define DEBUG 1
 /**
 *@brief Class object used to create a consumer client
 */
@@ -48,7 +46,7 @@ class Producer: public IAMQP{
         Producer &operator=(const Producer &Producer) = delete;
     
 
-        ~Producer(){            
+        ~Producer(){           
             delete m_myHandler;
             delete m_address;
             delete m_connection;
@@ -83,7 +81,7 @@ class Producer: public IAMQP{
         * @brief Send a message to a topic
         * 
         * @param msg message to be sent
-        *@param topic topic the message is going to be sent
+        * @param topic topic the message is going to be sent
         */
         void PublishToTopic(const std::string& msg, const std::string& topic);
 

@@ -34,13 +34,13 @@ void Producer::Start(){
   
    if(Get_AMQP_State() != EXCHANGE_ONLY){
       m_channel->declareQueue(m_queue, m_conf.QueueFlags).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-         #if DEBUG
+         #ifdef DEBUG
             std::cout<<"producer declared queue: "<<m_queue<<std::endl;
          #endif
       });
    }else{
       m_channel->declareQueue(m_conf.QueueFlags).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-         #if DEBUG
+         #ifdef DEBUG
             std::cout<<"producer declared queue with no name!"<<std::endl;
          #endif
          m_queue = name;
@@ -54,11 +54,11 @@ void Producer::Start(){
 		
       /*Check if the exchange exists first*/
       m_channel->declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([this](){
-        #if DEBUG
+        #ifdef DEBUG
             std::cout<<"consumer confirms the exchange exists!"<<std::endl;
         #endif    
         if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
-            #if DEBUG
+            #ifdef DEBUG
                std::cout<<"cproducer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
             #endif
               m_channel->bindQueue(m_exchange, m_queue, "");
@@ -72,7 +72,7 @@ void Producer::Start(){
 }
 
 void Producer::PublishMsg(const std::string& msg){
-   #if DEBUG
+   #ifdef DEBUG
       std::cout<<"Publishing a message: "<<msg<<"!"<<std::endl;
    #endif
    m_channel->publish(m_exchange, "", msg); 
@@ -80,7 +80,7 @@ void Producer::PublishMsg(const std::string& msg){
 
 void Producer::Subscribe(const std::string& topic){
    if(m_conf.ETypes != AMQP::topic){
-      #if DEBUG
+      #ifdef DEBUG
       std::cout<<"You are not using topic exchange type!"<<std::endl;
       #endif
       return;
@@ -90,7 +90,7 @@ void Producer::Subscribe(const std::string& topic){
 
 void Producer::PublishToTopic(const std::string& msg, const std::string& topic){
    if(m_conf.ETypes != AMQP::topic){
-      #if DEBUG
+      #ifdef DEBUG
       std::cout<<"You are not using topic exchange type!"<<std::endl;
       #endif
       return;

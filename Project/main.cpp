@@ -1,4 +1,4 @@
-#define DEBUG 1
+
 
 #include <iostream>
 #include <thread>
@@ -10,7 +10,6 @@
 #define LOG(x) std::cout<<x<<std::endl;
 
 int main(){
-
     IAMQP::QEConf p_conf;
     p_conf.QueueFlags    = 0;
     p_conf.ExchangeFlags = 0;

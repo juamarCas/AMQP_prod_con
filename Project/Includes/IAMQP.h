@@ -6,6 +6,8 @@
 #include <functional>
 #include "MyHandler.h"
 
+#define DEBUG
+
 class IAMQP{
 
 protected:
@@ -75,7 +77,11 @@ public:
         m_amqpState = QUEUE_EXCHANGE_RK; 
     }
 
-    virtual ~IAMQP(){}
+    virtual ~IAMQP(){
+        #ifdef DEBUG
+        std::cout<<"IAMQP destructor called!"<<std::endl;
+        #endif
+    }
 
     /*No copy constructors can be called*/
     IAMQP(const IAMQP&) = delete;

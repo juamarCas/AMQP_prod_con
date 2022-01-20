@@ -1,7 +1,7 @@
 #ifndef CONSUMER_H
 #define CONSUMER_H
 #include "IAMQP.h"
-#define DEBUG 1
+
 /**
 *@brief Class for consumer of AMQP broker
 */
