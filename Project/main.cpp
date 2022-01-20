@@ -8,15 +8,16 @@
 #include "json.hpp"
 
 #define LOG(x) std::cout<<x<<std::endl;
+
 int main(){
 
     IAMQP::QEConf p_conf;
-    p_conf.QueueFlags    = 0; 
+    p_conf.QueueFlags    = 0;
     p_conf.ExchangeFlags = 0;
     p_conf.ETypes        = AMQP::topic;
 
-    IAMQP::QEConf c_conf; 
-    c_conf.QueueFlags    = 0; 
+    IAMQP::QEConf c_conf;
+    c_conf.QueueFlags    = 0;
     c_conf.ExchangeFlags = 0;
     c_conf.ETypes        = AMQP::topic;
 
@@ -36,9 +37,9 @@ int main(){
 
     static const std::string j_car_name        = "name";
     static const std::string j_car_durable     = "durable";
-    static const std::string j_car_passive     = "passive"; 
+    static const std::string j_car_passive     = "passive";
     static const std::string j_car_exclusive   = "exclusive";
-    static const std::string j_car_internal    = "internal"; 
+    static const std::string j_car_internal    = "internal";
     static const std::string j_car_type        = "type";
     static const std::string j_car_enable      = "enable";
 
@@ -48,7 +49,7 @@ int main(){
     static const std::string j_flag_exclusive  = "exclusive";
     static const std::string j_flag_internal   = "internal";
 
-    static const std::string j_topic           = "topic"; 
+    static const std::string j_topic           = "topic";
 
     static const std::string j_queue           = "queue";
     static const std::string j_exchange        = "exchange";
@@ -108,10 +109,6 @@ int main(){
     bool producer_q_exclusive  = j[j_producer][j_queue][j_flag_exclusive][j_car_enable];
 
     if(producer_q_exclusive){
-        
-        #if DEBUG
-            std::cout<<"declared"<<std::endl;
-        #endif
         p_conf.QueueFlags += AMQP::exclusive;
     }
 
@@ -142,12 +139,12 @@ int main(){
   auto message_cb1 = [](const std::string& message){
     //auto j_parsed = nlohmann::json::parse(message);
     // std::cout<<j_parsed.dump(4)<<j_receive<<"\n\n";
-    std::cout<<message<<std::endl; 
+    std::cout<<message<<std::endl;
   };
 
   Consumer::C_callbacks cbb1{
-      success_cb1, 
-      error_cb1, 
+      success_cb1,
+      error_cb1,
       message_cb1
   };
 
@@ -171,11 +168,11 @@ int main(){
   };
 
     Consumer c(username, password, host, vhost, consumer_exchange, c_conf,cbb1);
-    Producer p(username, password, host, vhost, producer_exchange, p_conf,cbb); 
+    Producer p(username, password, host, vhost, producer_exchange, p_conf,cbb);
 
     std::thread Producer_thread(
         [&p](){
-            p.Start(); 
+            p.Start();
         }
     );
     Producer_thread.detach();
@@ -183,24 +180,23 @@ int main(){
     while(!p.GetIsReady()){}
     std::thread Consumer_thread(
         [&c](){
-            c.Start(); 
+            c.Start();
         }
     );
     while(!c.GetIsReady()){}
-    
-    Consumer_thread.detach(); 
-    nlohmann::json js;
-    int var1 = 15; 
-    float var2 = 5.5; 
 
-    js["pos"]  = var1; 
-    js["temp"] = var2; 
+    Consumer_thread.detach();
+    nlohmann::json js;
+    int var1 = 15;
+    float var2 = 5.5;
+
+    js["pos"]  = var1;
+    js["temp"] = var2;
     std::string msg = js.dump();
     while(1){
-
         std::cin.get();
-        p.PublishMsg(msg); 
+        p.PublishMsg(msg);
     }
 
-    return 0; 
+    return 0;
 }
