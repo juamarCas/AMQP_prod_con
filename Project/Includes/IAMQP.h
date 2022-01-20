@@ -24,6 +24,12 @@ protected:
     vf_s  subscribeTopicLmda;
     vf_ss publishToTopicLmda;
 
+    struct ev_loop * m_loop;
+    MyHandler * m_myHandler;
+    AMQP::Address * m_address;
+    AMQP::TcpConnection * m_connection;
+    AMQP::TcpChannel * m_channel;
+
 private:
     AMQP_STATE m_amqpState;
 

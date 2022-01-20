@@ -1,6 +1,5 @@
 #ifndef CONSUMER_H
 #define CONSUMER_H
-#define CONSUMER_DEBUG 1
 #include "IAMQP.h"
 #define DEBUG 1
 /**
@@ -45,7 +44,12 @@ public:
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const Consumer&) = delete;
-    ~Consumer(){} 
+    ~Consumer(){
+        delete m_myHandler;
+        delete m_address;
+        delete m_connection;
+        delete m_channel;
+    } 
 
     void SetQueue(const std::string& queue, const std::function<void(void)>& callback); 
 
@@ -55,8 +59,28 @@ public:
     void Start();
 
     /*Topic usage methods*/
+    /**
+     * @brief Subscribe to a topic on the AMQP broker
+     * 
+     * @param topic topic to be subscribe
+     * example: sensor.building1.*
+     */
     void Subscribe(const std::string& topic);
+
+    /**
+     * @brief Send a message to a topic
+     * 
+     * @param msg message to be sent
+     * @param topic topic the message is going to be sent
+     */
     void PublishToTopic(const std::string& msg, const std::string& topic);
+
+    /**
+     * @brief Get the Is Ready object
+     * 
+     * @return true it has started operating
+     * @return false it hasn't started operating
+     */
     inline bool GetIsReady(){ return isReady; }
 };
 

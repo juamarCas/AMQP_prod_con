@@ -34,30 +34,30 @@ void Consumer::Start(){
 	#if DEBUG
 		std::cout<<"entered to start"<<std::endl;
 	#endif
-	auto *loop = ev_loop_new(0);
-	MyHandler myHandler(loop);
-	AMQP::Address address(m_url);
-	AMQP::TcpConnection connection(&myHandler, address);
-	AMQP::TcpChannel channel(&connection);
+	m_loop = ev_loop_new(0); 
+	m_myHandler = new MyHandler(m_loop);
+  	m_address = new AMQP::Address(m_url);
+  	m_connection = new AMQP::TcpConnection(m_myHandler, *m_address);
+  	m_channel = new AMQP::TcpChannel(m_connection);
 
-	channel.declareQueue(m_queue).onSuccess([&channel](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+	m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
 		#if DEBUG
             std::cout<<"consumer declared queue"<<std::endl;
 		#endif
    	});
 
 	if(Get_AMQP_State() != EXCHANGE_ONLY){
-      channel.declareQueue(m_queue).onSuccess([&channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-         #if DEBUG
-            std::cout<<"consumer declared queue: "<<m_queue<<std::endl;
-         #endif
+        m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+        #if DEBUG
+        std::cout<<"consumer declared queue: "<<m_queue<<std::endl;
+        #endif
       });
    }else{
-      channel.declareQueue(m_conf.QueueFlags).onSuccess([&channel, this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-         #if DEBUG
-            std::cout<<"consumer declared queue with no name!"<<std::endl;
-         #endif
-         m_queue = name;
+      	m_channel->declareQueue(m_conf.QueueFlags).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
+        #if DEBUG
+        std::cout<<"consumer declared queue with no name!"<<std::endl;
+        #endif
+        m_queue = name;
       });
    } 
    
@@ -66,7 +66,7 @@ void Consumer::Start(){
 	
 	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE || Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
 		 /*Check if the exchange exists first*/
-        channel.declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([&channel, this](){
+        m_channel->declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([this](){
         #if DEBUG
             std::cout<<"consumer confirms the exchange exists!"<<std::endl;
         #endif
@@ -75,26 +75,16 @@ void Consumer::Start(){
           
         if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
             #if DEBUG
-               std::cout<<"consumer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
+            std::cout<<"consumer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
             #endif
-              channel.bindQueue(m_exchange, m_queue, "");
+            m_channel->bindQueue(m_exchange, m_queue, "");
         }  
 
       });
 
-
-		if(m_conf.ETypes == AMQP::topic){
-			subscribeTopicLmda = [&channel, this](const std::string& topic){
-				channel.bindQueue(m_exchange, m_queue, topic);
-			};
-
-			publishToTopicLmda = [&channel, this](const std::string& msg, const std::string& topic){
-				channel.publish(m_exchange, topic, msg.c_str());
-			};
-		}
 	}
 
-	auto messageCb = [&channel, this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
+	auto messageCb = [this](const AMQP::Message &message, uint64_t deliveryTag, bool redelivered){
 #if DEBUG
 		std::cout << "message received!!" << std::endl;
 #endif
@@ -103,16 +93,16 @@ void Consumer::Start(){
     	msg_receive[message.bodySize()] = '\0';  //extract message from broker and converts it into string
     	std::string msg_final = std::string(msg_receive);
 		(m_callbacks->message_callback)(msg_final);
-		channel.ack(deliveryTag);
+		m_channel->ack(deliveryTag);
 	};
 
-	channel
-    .consume(m_queue)
+	m_channel
+    ->consume(m_queue)
     .onReceived(messageCb)
     .onSuccess(m_callbacks->success_callback)
     .onError(m_callbacks->error_callback);
 	isReady = true;
-	ev_run(loop);
+	ev_run(m_loop);
 }
 
 void Consumer::Subscribe(const std::string& topic){
@@ -121,8 +111,8 @@ void Consumer::Subscribe(const std::string& topic){
       std::cout<<"You are not using topic exchange type!"<<std::endl;
       #endif
       return;
-   }
-	(subscribeTopicLmda)(topic);
+   	}
+	m_channel->bindQueue(m_exchange, m_queue, topic);
 }
 
 void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
@@ -132,5 +122,5 @@ void Consumer::PublishToTopic(const std::string& msg, const std::string& topic){
       #endif
       return;
    }
-   (publishToTopicLmda)(msg, topic);
+   m_channel->publish(m_exchange, topic, msg.c_str());
 }

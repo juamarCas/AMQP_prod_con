@@ -16,7 +16,6 @@ class Producer: public IAMQP{
             IAMQP::vf_s  message_callback;
         }P_callbacks;
     private: 
-    
         P_callbacks * m_callbacks;
         IAMQP::vf_s   PublishMSGLmbda; 
 	    //AMQP::TcpChannel m_channel(AMQP::TcpConnection *);
@@ -45,7 +44,13 @@ class Producer: public IAMQP{
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks);
        
         Producer(const Producer&) = delete;
-        ~Producer(){} 
+
+        ~Producer(){            
+            delete m_myHandler;
+            delete m_address;
+            delete m_connection;
+            delete m_channel;
+        } 
         void Start(); 
 
 
@@ -62,7 +67,21 @@ class Producer: public IAMQP{
         void PublishMsg(const std::string& queue, const std::string& exchange, const std::string& routeKey, const std::string& msg);
 
         /*topic usage methods*/
+        
+        /**
+        * @brief Subscribe to a topic on the AMQP broker
+        * 
+        * @param topic topic to be subscribe
+        *example: sensor.building1.*
+        */
         void Subscribe(const std::string& topic);
+
+        /**
+        * @brief Send a message to a topic
+        * 
+        * @param msg message to be sent
+        *@param topic topic the message is going to be sent
+        */
         void PublishToTopic(const std::string& msg, const std::string& topic);
 
         inline bool GetIsReady(){ return isReady; }
