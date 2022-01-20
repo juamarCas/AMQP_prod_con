@@ -43,7 +43,10 @@ class Producer: public IAMQP{
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, IAMQP::QEConf conf, P_callbacks& callbacks);
         Producer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf,P_callbacks& callbacks);
        
+        /*No copy constructors can be called*/
         Producer(const Producer&) = delete;
+        Producer &operator=(const Producer &Producer) = delete;
+    
 
         ~Producer(){            
             delete m_myHandler;

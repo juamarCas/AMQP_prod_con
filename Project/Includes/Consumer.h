@@ -43,7 +43,11 @@ public:
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& exchange, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, IAMQP::QEConf conf, C_callbacks& callbacks);
     Consumer(const std::string& user, const std::string& password, const std::string& host, const std::string& vhost, const std::string& queue, const std::string& exchange, const std::string& routingKey, IAMQP::QEConf conf, C_callbacks& callbacks);
+   
+    /*No copy constructors can be called*/    
+    Consumer &operator=(const Consumer &consumer) = delete;
     Consumer(const Consumer&) = delete;
+    
     ~Consumer(){
         delete m_myHandler;
         delete m_address;
