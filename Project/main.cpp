@@ -10,6 +10,22 @@
 #define LOG(x) std::cout<<x<<std::endl;
 
 int main(int argv, const char ** argc){
+
+    if(argv < 3){
+        LOG("remember, you have to excecute the app with the following form:"); 
+        LOG("./app <topic_consumer> <topic_producer>");
+
+        return -1;
+    }
+
+    const std::string topic_consumer(argc[1]);
+    const std::string topic_producer(argc[2]);
+
+    #ifdef DEBUG
+    LOG("consumer topic: " + topic_consumer);
+    LOG("producer topic: " + topic_producer);
+    #endif
+
     IAMQP::QEConf p_conf;
     p_conf.QueueFlags    = 0;
     p_conf.ExchangeFlags = 0;
@@ -184,7 +200,7 @@ int main(int argv, const char ** argc){
         }
     );
     while(!c.GetIsReady()){}
-    c.Subscribe("hello.world");
+    c.Subscribe(topic_consumer);
     Consumer_thread.detach();
     nlohmann::json js;
     int var1 = 15;
@@ -195,7 +211,7 @@ int main(int argv, const char ** argc){
     std::string msg = js.dump();
     while(1){
         std::cin.get();
-        p.PublishToTopic("hello", "hello.world");
+        p.PublishToTopic("hello", topic_producer);
     }
 
     return 0;
