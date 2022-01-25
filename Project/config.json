@@ -1,7 +1,7 @@
 {
     "login":{
-        "username": "guest", 
-        "password": "guest",
+        "username": "test", 
+        "password": "test123",
         "host": "localhost", 
         "vhost": "" 
     },
@@ -43,7 +43,7 @@
                 "value": 65536, 
                 "enable": false
             }, 
-            "type": "fanout", 
+            "type": "topic", 
             "topic":{
                 "enable": false, 
                 "topics":[]
@@ -89,7 +89,7 @@
                 "value": 65536, 
                 "enable": false
             }, 
-            "type": "fanout", 
+            "type": "topic", 
             "topic":{
                 "enable": false, 
                 "topics":[]

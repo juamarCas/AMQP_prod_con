@@ -36,15 +36,9 @@ void Consumer::Start(){
 	#endif
 	m_loop = ev_loop_new(0); 
 	m_myHandler = new MyHandler(m_loop);
-  	m_address = new AMQP::Address(m_url);
-  	m_connection = new AMQP::TcpConnection(m_myHandler, *m_address);
-  	m_channel = new AMQP::TcpChannel(m_connection);
-
-	m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){
-		#ifdef DEBUG
-            std::cout<<"consumer declared queue"<<std::endl;
-		#endif
-   	});
+  m_address = new AMQP::Address(m_url);
+	m_connection = new AMQP::TcpConnection(m_myHandler, *m_address);
+  m_channel = new AMQP::TcpChannel(m_connection);
 
 	if(Get_AMQP_State() != EXCHANGE_ONLY){
         m_channel->declareQueue(m_queue).onSuccess([this](const std::string &name, uint32_t messageCount, uint32_t consumercount){

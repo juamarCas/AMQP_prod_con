@@ -51,15 +51,14 @@ void Producer::Start(){
    if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE_RK){
 
 	}else if(Get_AMQP_State() == IAMQP::QUEUE_EXCHANGE || Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
-		
-      /*Check if the exchange exists first*/
+            /*Check if the exchange exists first*/
       m_channel->declareExchange(m_exchange, m_conf.ETypes, m_conf.ExchangeFlags).onSuccess([this](){
         #ifdef DEBUG
-            std::cout<<"consumer confirms the exchange exists!"<<std::endl;
+            std::cout<<"producer confirms the exchange exists!"<<std::endl;
         #endif    
         if(Get_AMQP_State() == IAMQP::EXCHANGE_ONLY){
             #ifdef DEBUG
-               std::cout<<"cproducer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
+               std::cout<<"producer binded queue "<<m_queue<<"to exchange "<<m_exchange<<std::endl;
             #endif
               m_channel->bindQueue(m_exchange, m_queue, "");
         }
@@ -95,5 +94,8 @@ void Producer::PublishToTopic(const std::string& msg, const std::string& topic){
       #endif
       return;
    }
+   #ifdef DEBUG
+      std::cout<<"Publishing a message: "<<msg<<"!"<<std::endl;
+   #endif
    m_channel->publish(m_exchange, topic, msg.c_str());
 }

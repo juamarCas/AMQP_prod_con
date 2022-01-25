@@ -9,7 +9,7 @@
 
 #define LOG(x) std::cout<<x<<std::endl;
 
-int main(){
+int main(int argv, const char ** argc){
     IAMQP::QEConf p_conf;
     p_conf.QueueFlags    = 0;
     p_conf.ExchangeFlags = 0;
@@ -23,6 +23,7 @@ int main(){
     /*json labels
     *consts with 'car' means "characteristic", like name for example
     */
+
     static const std::string json_path  = "./config.json";
 
     static const std::string j_login           = "login";
@@ -183,7 +184,7 @@ int main(){
         }
     );
     while(!c.GetIsReady()){}
-
+    c.Subscribe("hello.world");
     Consumer_thread.detach();
     nlohmann::json js;
     int var1 = 15;
@@ -194,7 +195,7 @@ int main(){
     std::string msg = js.dump();
     while(1){
         std::cin.get();
-        p.PublishMsg(msg);
+        p.PublishToTopic("hello", "hello.world");
     }
 
     return 0;
